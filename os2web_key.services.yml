@@ -3,6 +3,29 @@ services:
     parent: logger.channel_base
     arguments: [ 'os2web_key' ]
 
-  Drupal\os2web_key\KeyHelper:
+  os2web_key.key_helper:
+    class: 'Drupal\os2web_key\KeyHelper'
     arguments:
       - '@logger.channel.os2web_key'
+
+  os2web_key.certificate_key_type:
+    class: 'Drupal\os2web_key\Plugin\KeyType\CertificateKeyType'
+    arguments:
+      - '@os2web_key.key_helper'
+
+  os2web_key.psr16_cache:
+    class: 'Drupal\os2web_key\Services\Psr16CacheAdapter'
+    arguments:
+      - '@cache.default'
+
+  os2web_key.certificate_helper:
+    class: 'Drupal\os2web_key\Services\VaultCertificateHelper'
+    arguments:
+      - '@file_system'
+
+  os2web_key.key_provider:
+    class: 'Drupal\os2web_key\Plugin\KeyProvider\VaultKeyProvider'
+    arguments:
+      - '@logger.channel.os2web_key'
+      - '@http_client'
+      - '@os2web_key.psr16_cache'

@@ -13,7 +13,8 @@
         "php": "^8.1",
         "ext-openssl": "*",
         "drupal/core": "^9 || ^10",
-        "drupal/key": "^1.17"
+        "drupal/key": "^1.17",
+        "itk-dev/vault": "^0.1"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",

@@ -32,19 +32,24 @@ class KeyHelper {
    * @return array{cert: string, pkey: string}
    *   The certificates.
    */
-  public function getCertificates(KeyInterface $key): array {
+  public function getCertificates(KeyInterface $key, bool $parseCertificate = FALSE): array {
     $type = $key->getKeyType();
     if (!($type instanceof CertificateKeyType)) {
       throw $this->createSslRuntimeException(sprintf('Invalid key type: %s', $type::class), $key);
     }
     $contents = $key->getKeyValue();
 
-    return $this->parseCertificates(
-      $contents,
-      $type->getInputFormat(),
-      $type->getPassphrase(),
-      $key
-    );
+    if ($parseCertificate) {
+      return $this->parseCertificates(
+        $contents,
+        $type->getInputFormat(),
+        $type->getPassphrase(),
+        $key
+      );
+    }
+    else {
+      return ['cert' => $contents];
+    }
   }
 
   /**

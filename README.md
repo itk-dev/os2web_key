@@ -122,11 +122,11 @@ below to run the checks locally.
 ### PHP
 
 ```shell
-docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.1-fpm composer install
+docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.3-fpm composer install
 # Fix (some) coding standards issues
-docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.1-fpm composer coding-standards-apply
+docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.3-fpm composer coding-standards-apply
 # Check that code adheres to the coding standards
-docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.1-fpm composer coding-standards-check
+docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.3-fpm composer coding-standards-check
 ```
 
 ### Markdown
@@ -140,9 +140,9 @@ docker run --rm --volume $PWD:/md peterdavehello/markdownlint markdownlint --ign
 
 We use [PHPStan](https://phpstan.org/) for static code analysis.
 
-Running statis code analysis on a standalone Drupal module is a bit tricky, so we use a helper script to run the
+Running static code analysis on a standalone Drupal module is a bit tricky, so we use a helper script to run the
 analysis:
 
 ```shell
-docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.1-fpm ./scripts/code-analysis
+docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.3-fpm ./scripts/code-analysis
 ```

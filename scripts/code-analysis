@@ -11,26 +11,14 @@ drupal_composer() {
   composer --working-dir="$drupal_dir" --no-interaction "$@"
 }
 
-# Create new Drupal 9 project
+# Create new Drupal 10 project
 if [ ! -f "$drupal_dir/composer.json" ]; then
-  composer --no-interaction create-project drupal/recommended-project:^9 "$drupal_dir"
+  composer --no-interaction create-project drupal/recommended-project:^10 "$drupal_dir"
 fi
 # Copy our code into the modules folder
-
-# Clean up
-rm -fr "${drupal_dir:?}/$module_path"
-
+mkdir -p "$drupal_dir/$module_path"
 # https://stackoverflow.com/a/15373763
-# rsync --archive --compress . --filter=':- .gitignore' --exclude "$drupal_dir" --exclude .git "$drupal_dir/$module_path"
-
-# The rsync command in not available in itkdev/php8.1-fpm
-
-git config --global --add safe.directory /app
-# Copy module files into module path
-for f in $(git ls-files); do
-  mkdir -p "$drupal_dir/$module_path/$(dirname "$f")"
-  cp "$f" "$drupal_dir/$module_path/$f"
-done
+rsync --archive --compress . --filter=':- .gitignore' --exclude "$drupal_dir" --exclude .git "$drupal_dir/$module_path"
 
 drupal_composer config minimum-stability dev
 
@@ -38,10 +26,16 @@ drupal_composer config minimum-stability dev
 # https://getcomposer.org/doc/06-config.md#allow-plugins
 drupal_composer config --no-plugins allow-plugins true
 
+# Making Drupal 10 compatible
+drupal_composer require psr/http-message:^1.0
+drupal_composer require mglaman/composer-drupal-lenient
+drupal_composer config --merge --json extra.drupal-lenient.allowed-list '["drupal/coc_forms_auto_export", "drupal/webform_node_element"]'
+
 drupal_composer require wikimedia/composer-merge-plugin
 drupal_composer config extra.merge-plugin.include "$module_path/composer.json"
 # https://www.drupal.org/project/drupal/issues/3220043#comment-14845434
 drupal_composer require --dev symfony/phpunit-bridge
+
 
 # Run PHPStan
 (cd "$drupal_dir/$module_path" && ../../../../vendor/bin/phpstan)

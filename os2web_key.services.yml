@@ -29,3 +29,4 @@ services:
       - '@logger.channel.os2web_key'
       - '@http_client'
       - '@os2web_key.psr16_cache'
+      - '@os2web_key.key_helper'

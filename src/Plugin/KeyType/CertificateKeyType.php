@@ -143,7 +143,7 @@ class CertificateKeyType extends KeyTypeBase implements KeyPluginFormInterface {
     }
 
     try {
-      $this->certificateHelper->createPasswordlessCertificate($certificates, $outputFormat, NULL);
+      $this->certificateHelper->convertCertificates($certificates, $outputFormat, NULL);
     }
     catch (RuntimeException $exception) {
       $form_state->setError($form, $this->t('Error creating passwordless certificate: @message', ['@message' => $exception->getMessage()]));

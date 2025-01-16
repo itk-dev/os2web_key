@@ -8,6 +8,8 @@ use Drupal\Core\Site\Settings;
 use Drupal\key\KeyInterface;
 use Drupal\key\Plugin\KeyPluginFormInterface;
 use Drupal\key\Plugin\KeyProviderBase;
+use Drupal\os2web_key\KeyHelper;
+use Drupal\os2web_key\Plugin\KeyType\CertificateKeyType;
 use GuzzleHttp\Psr7\HttpFactory;
 use ItkDev\Vault\Exception\UnknownErrorException;
 use ItkDev\Vault\Exception\VaultException;
@@ -50,6 +52,8 @@ final class VaultKeyProvider extends KeyProviderBase implements KeyPluginFormInt
    *   A http client.
    * @param \Psr\SimpleCache\CacheInterface $cache
    *   A PSR-16 Cache service.
+   * @param \Drupal\os2web_key\KeyHelper $keyHelper
+   *   The key helper.
    */
   public function __construct(
     array $configuration,
@@ -58,6 +62,7 @@ final class VaultKeyProvider extends KeyProviderBase implements KeyPluginFormInt
     LoggerChannelInterface $logger,
     private readonly ClientInterface $httpClient,
     private readonly CacheInterface $cache,
+    private readonly KeyHelper $keyHelper,
   ) {
     $this->setLogger($logger);
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -74,6 +79,7 @@ final class VaultKeyProvider extends KeyProviderBase implements KeyPluginFormInt
       $container->get('logger.channel.default'),
       $container->get('http_client'),
       $container->get('os2web_key.psr16_cache'),
+      $container->get('os2web_key.key_helper'),
     );
   }
 
@@ -106,9 +112,16 @@ final class VaultKeyProvider extends KeyProviderBase implements KeyPluginFormInt
       );
     }
     catch (\DateMalformedStringException | \DateMalformedIntervalStringException | UnknownErrorException | VaultException | InvalidArgumentException $e) {
-      $this->logger->error('Could not fetch login token when attempt to fetch key with id:' . $key->id());
-      return '';
+      // Log the exception and re-throw it.
+      $this->logger->error('Error fetching login token for key (@key_id): @message', [
+        '@key_id' => $key->id(),
+        '@message' => $e->getMessage(),
+        'throwable' => $e,
+      ]);
+
+      throw $e;
     }
+
     $config = $this->configuration;
 
     $vaultPath = $config['vault_path'];
@@ -130,8 +143,19 @@ final class VaultKeyProvider extends KeyProviderBase implements KeyPluginFormInt
       );
     }
     catch (\DateMalformedStringException | UnknownErrorException | VaultException | InvalidArgumentException $e) {
-      $this->logger->error('Could not fetch value from key:' . $key->id());
-      return '';
+      // Log the exception and re-throw it.
+      $this->logger->error('Error getting certificate for key (@key_id): @message', [
+        '@key_id' => $key->id(),
+        '@message' => $e->getMessage(),
+        'throwable' => $e,
+      ]);
+
+      throw $e;
+    }
+
+    $type = $key->getKeyType();
+    if (!($type instanceof CertificateKeyType)) {
+      throw $this->keyHelper->createSslRuntimeException(sprintf('Invalid key type: %s', $type::class), $key);
     }
 
     return $secret->value;

@@ -41,4 +41,4 @@ drupal_composer --no-interaction install
 
 
 # Run PHPStan
-(cd "$drupal_dir" && vendor/bin/phpstan)
+(cd "$drupal_dir/$module_path" && ../../../../vendor/bin/phpstan)

@@ -84,6 +84,11 @@ class Psr16CacheAdapter implements CacheInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @param iterable<mixed, mixed> $values
+   *   A list of key => value pairs for a multiple-set operation.
+   * @param \DateInterval|int|null $ttl
+   *   Optional. The TTL value of this item.
    */
   public function setMultiple($values, $ttl = NULL): bool {
     // Not implemented for simplicity.

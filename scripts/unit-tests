@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 script_dir=$(pwd)
 module_name=$(basename "$script_dir")
-drupal_dir=vendor/drupal-module-code-analysis
+drupal_dir=vendor/drupal-module-unit-tests-analysis
 # Relative to $drupal_dir
 module_path=web/modules/contrib/$module_name
 
@@ -22,6 +22,8 @@ rsync --archive --compress . --filter=':- .gitignore' --exclude "$drupal_dir" --
 
 drupal_composer config minimum-stability dev
 
+drupal_composer --append repositories.os2web/os2web_key path "$module_path"
+
 # Allow ALL plugins
 # https://getcomposer.org/doc/06-config.md#allow-plugins
 drupal_composer config --no-plugins allow-plugins true
@@ -35,7 +37,7 @@ drupal_composer require wikimedia/composer-merge-plugin
 drupal_composer config extra.merge-plugin.include "$module_path/composer.json"
 # https://www.drupal.org/project/drupal/issues/3220043#comment-14845434
 drupal_composer require --dev symfony/phpunit-bridge
-
+drupal_composer --no-interaction install
 
 # Run PHPUnit
-(cd "$drupal_dir" && vendor/bin/phpunit "$module_path/tests/src/Unit/KeyHelperUnitTest.php")
+(cd "$drupal_dir" && vendor/bin/phpunit --configuration web/core/phpunit.xml.dist "$module_path/tests/src/Unit/KeyHelperUnitTest.php")

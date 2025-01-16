@@ -139,6 +139,8 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Unit tests
         run: |
           ./scripts/unit-tests

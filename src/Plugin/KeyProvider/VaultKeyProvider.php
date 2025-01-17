@@ -100,8 +100,8 @@ final class VaultKeyProvider extends KeyProviderBase implements KeyPluginFormInt
    * {@inheritdoc}
    */
   public function getKeyValue(KeyInterface $key) {
-    $roleId = Settings::get('itkdev_vault_role_id');
-    $secretId = Settings::get('itkdev_vault_secret_id');
+    $roleId = Settings::get('os2web_vault_role_id');
+    $secretId = Settings::get('os2web_vault_secret_id');
 
     $vault = $this->getVault();
 
@@ -250,7 +250,7 @@ final class VaultKeyProvider extends KeyProviderBase implements KeyPluginFormInt
         requestFactory: $httpFactory,
         streamFactory: $httpFactory,
         cache: $this->cache,
-        vaultUrl: Settings::get('itkdev_vault_url'),
+        vaultUrl: Settings::get('os2web_vault_url'),
       );
     }
 

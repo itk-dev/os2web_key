@@ -3,7 +3,7 @@
 Key types and providers for OS2Web built on the [Key module](https://www.drupal.org/project/key).
 
 The OS2Web key module provides two _key types_, [Certificate](#certificate) and [OpenID Connect
-(OIDC)](#openid-connect-oidc). Two _key providers_, [Azure Key Vault](#azure-key-vault) and [Infisical](#infisical), are
+(OIDC)](#openid-connect-oidc). Two _key providers_, [Azure Key Vault](#azure-key-vault) and [HashiCorp Vault](#hashicorp-vault), are
 planned, but not yet implemented.
 
 See [the Key Developer Guide](https://www.drupal.org/docs/contributed-modules/key/developer-guide) for details in how to
@@ -106,13 +106,16 @@ $key = $repository->getKey('openid_connect_ad');
 
 ## Providers
 
+The module comes with two key providers.
+
 ### Azure Key Vault
 
-`@todo` <https://azure.microsoft.com/en-us/products/key-vault>
+Used for fetching certificate from Azure Key vault.
 
-### Infisical
+### HashiCorp Vault
 
-`@todo` <https://infisical.com/>
+Used to fetch any sort of secret string from HashiCorp vault. Note that
+this can only provide string values, i.e. no binary files.
 
 ## Coding standards
 
@@ -145,4 +148,18 @@ analysis:
 
 ```shell
 docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.3-fpm ./scripts/code-analysis
+```
+
+## Unit tests
+
+We use [PHPUnit](https://phpunit.de/documentation.html) for unit testing.
+
+Testing mostly centers around the conversion and parsing of certificates. For this purpose a bunch of test
+certificates has been generated.
+
+Running PHPUnit tests in a standalone Drupal module is a bit tricky, so we use a helper script to run the
+analysis:
+
+```shell
+docker run --rm --volume ${PWD}:/app --workdir /app itkdev/php8.3-fpm ./scripts/unit-tests
 ```

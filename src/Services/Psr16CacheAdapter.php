@@ -11,20 +11,12 @@ use Psr\SimpleCache\CacheInterface;
 class Psr16CacheAdapter implements CacheInterface {
 
   /**
-   * The Drupal cache backend.
-   *
-   * @var \Drupal\Core\Cache\CacheBackendInterface
-   */
-  protected CacheBackendInterface $cacheBackend;
-
-  /**
    * Constructs a new Psr16CacheAdapter.
    *
    * @param \Drupal\Core\Cache\CacheBackendInterface $cacheBackend
    *   The Drupal cache backend.
    */
-  public function __construct(CacheBackendInterface $cacheBackend) {
-    $this->cacheBackend = $cacheBackend;
+  public function __construct(private readonly CacheBackendInterface $cacheBackend) {
   }
 
   /**

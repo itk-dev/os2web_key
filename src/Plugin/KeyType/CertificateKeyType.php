@@ -56,7 +56,7 @@ class CertificateKeyType extends KeyTypeBase implements KeyPluginFormInterface {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('os2web_key.key_helper')
+      $container->get(KeyHelper::class)
     );
   }
 

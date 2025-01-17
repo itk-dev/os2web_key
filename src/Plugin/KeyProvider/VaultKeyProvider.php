@@ -9,6 +9,7 @@ use Drupal\key\KeyInterface;
 use Drupal\key\Plugin\KeyPluginFormInterface;
 use Drupal\key\Plugin\KeyProviderBase;
 use Drupal\os2web_key\KeyHelper;
+use Drupal\os2web_key\Services\Psr16CacheAdapter;
 use Drupal\os2web_key\Plugin\KeyType\CertificateKeyType;
 use GuzzleHttp\Psr7\HttpFactory;
 use ItkDev\Vault\Exception\UnknownErrorException;
@@ -78,8 +79,8 @@ final class VaultKeyProvider extends KeyProviderBase implements KeyPluginFormInt
       $plugin_definition,
       $container->get('logger.channel.default'),
       $container->get('http_client'),
-      $container->get('os2web_key.psr16_cache'),
-      $container->get('os2web_key.key_helper'),
+      $container->get(Psr16CacheAdapter::class),
+      $container->get(KeyHelper::class),
     );
   }
 

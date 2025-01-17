@@ -61,9 +61,9 @@ class KeyHelperUnitTest extends UnitTestCase {
   public function testCreateRuntimeExceptionWithSslMessage() {
     $this->mockLogger->expects($this->once())->method('error');
     $message = 'test';
-    $excepted = $message . ' (some SSL error)';
+    $expected = $message . ' (some SSL error)';
     $result = $this->keyHelper->createRuntimeException($message, NULL, 'some SSL error');
-    $this->assertEquals($excepted, $result->getMessage());
+    $this->assertEquals($expected, $result->getMessage());
   }
 
   /**
@@ -71,16 +71,16 @@ class KeyHelperUnitTest extends UnitTestCase {
    */
   public function testCreateRuntimeExceptionWithKeyAndSslMessage() {
     $mockMessage = 'test';
-    $exceptedMessage = $mockMessage . ' (some SSL error)';
+    $expectedMessage = $mockMessage . ' (some SSL error)';
     $mockKeyId = 'some_key_id';
     $this->mockLogger->expects($this->once())->method('error')->with('@key: @message', [
       '@key' => $mockKeyId,
-      '@message' => $exceptedMessage,
+      '@message' => $expectedMessage,
     ]);
     $mockKey = $this->createMock('Drupal\key\KeyInterface');
     $mockKey->expects($this->once())->method('id')->willReturn($mockKeyId);
     $result = $this->keyHelper->createRuntimeException($mockMessage, $mockKey, 'some SSL error');
-    $this->assertEquals($exceptedMessage, $result->getMessage());
+    $this->assertEquals($expectedMessage, $result->getMessage());
   }
 
   /**

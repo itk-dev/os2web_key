@@ -3,8 +3,8 @@
 Key types and providers for OS2Web built on the [Key module](https://www.drupal.org/project/key).
 
 The OS2Web key module provides two _key types_, [Certificate](#certificate) and [OpenID Connect
-(OIDC)](#openid-connect-oidc). Two _key providers_, [Azure Key Vault](#azure-key-vault) and [HashiCorp Vault](#hashicorp-vault), are
-planned, but not yet implemented.
+(OIDC)](#openid-connect-oidc). Two _key providers_, [Azure Key Vault](#azure-key-vault) and
+[HashiCorp Vault](#hashicorp-vault), are planned, but not yet implemented.
 
 See [the Key Developer Guide](https://www.drupal.org/docs/contributed-modules/key/developer-guide) for details in how to
 use keys in Drupal.

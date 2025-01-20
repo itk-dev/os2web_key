@@ -37,14 +37,9 @@ class KeyHelper {
     if (!($type instanceof CertificateKeyType)) {
       throw $this->createSslRuntimeException(sprintf('Invalid key type: %s', $type::class), $key);
     }
-    $contents = $key->getKeyValue();
 
-    return $this->parseCertificates(
-      $contents,
-      $type->getInputFormat(),
-      $type->getPassphrase(),
-      $key
-    );
+    return $this->parseCertificates($key->getKeyValue(), $type->getInputFormat(), $type->getPassphrase(), $key);
+
   }
 
   /**
@@ -85,7 +80,7 @@ class KeyHelper {
    * Parse certificates.
    *
    * @return array{cert: string, pkey: string}
-   *   The certificates.
+   *   The certificates, note that the certificate has no passphrase.
    */
   public function parseCertificates(
     string $contents,
@@ -97,6 +92,7 @@ class KeyHelper {
       CertificateKeyType::CERT => NULL,
       CertificateKeyType::PKEY => NULL,
     ];
+
     switch ($format) {
       case CertificateKeyType::FORMAT_PFX:
         if (!openssl_pkcs12_read($contents, $certificates, $passphrase)) {
@@ -109,30 +105,42 @@ class KeyHelper {
         if (FALSE === $certificate) {
           throw $this->createSslRuntimeException('Error reading certificate', $key);
         }
-        if (!@openssl_x509_export($certificate, $certificates['cert'])) {
+        if (!@openssl_x509_export($certificate, $certificates[CertificateKeyType::CERT])) {
           throw $this->createSslRuntimeException('Error exporting x509 certificate', $key);
         }
         $pkey = @openssl_pkey_get_private($contents, $passphrase);
         if (FALSE === $pkey) {
           throw $this->createSslRuntimeException('Error reading private key', $key);
         }
-        if (!@openssl_pkey_export($pkey, $certificates['pkey'])) {
+        if (!@openssl_pkey_export($pkey, $certificates[CertificateKeyType::PKEY])) {
           throw $this->createSslRuntimeException('Error exporting private key', $key);
         }
         break;
     }
 
     if (!isset($certificates[CertificateKeyType::CERT], $certificates[CertificateKeyType::PKEY])) {
-      throw $this->createRuntimeException("Cannot read certificate parts 'cert' and 'pkey'", $key);
+      throw $this->createRuntimeException("Cannot read certificate parts CertificateKeyType::CERT and CertificateKeyType::PKEY", $key);
     }
 
     return $certificates;
   }
 
   /**
-   * Create a passwordless certificate.
+   * Converts certificates to format.
+   *
+   * @param array $certificates
+   *   Output from parseCertificates.
+   * @param string $format
+   *   Format to convert into.
+   * @param ?KeyInterface $key
+   *   The key, for debugging purposes.
+   *
+   * @return string
+   *   The converted certificate.
+   *
+   * @see self::parseCertificates()
    */
-  public function createPasswordlessCertificate(array $certificates, string $format, ?KeyInterface $key): string {
+  public function convertCertificates(array $certificates, string $format, ?KeyInterface $key): string {
     $cert = $certificates[CertificateKeyType::CERT] ?? NULL;
     if (!isset($cert)) {
       throw $this->createRuntimeException('Certificate part "cert" not found', $key);
@@ -191,7 +199,14 @@ class KeyHelper {
    * Create an SSL runtime exception.
    */
   public function createSslRuntimeException(string $message, ?KeyInterface $key): RuntimeException {
-    return $this->createRuntimeException($message, $key, openssl_error_string() ?: NULL);
+    // @see https://www.php.net/manual/en/function.openssl-error-string.php.
+    $sslError = NULL;
+
+    while ($errorMessage = openssl_error_string()) {
+      $sslError = $errorMessage;
+    }
+
+    return $this->createRuntimeException($message, $key, $sslError);
   }
 
 }

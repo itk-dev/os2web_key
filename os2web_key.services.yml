@@ -4,5 +4,11 @@ services:
     arguments: [ 'os2web_key' ]
 
   Drupal\os2web_key\KeyHelper:
+    autowire: true
     arguments:
-      - '@logger.channel.os2web_key'
+      $logger: '@logger.channel.os2web_key'
+
+  Drupal\os2web_key\Services\Psr16CacheAdapter:
+    autowire: true
+    arguments:
+      $cacheBackend: '@cache.default'

@@ -13,15 +13,19 @@
         "php": "^8.1",
         "ext-openssl": "*",
         "drupal/core": "^9 || ^10",
-        "drupal/key": "^1.17"
+        "drupal/key": "^1.17",
+        "itk-dev/serviceplatformen": "^1.6",
+        "itk-dev/vault": "^0.1"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
         "drupal/coder": "^8.3",
+        "drupal/core-dev": "^9 || ^10",
         "ergebnis/composer-normalize": "^2.42",
         "mglaman/phpstan-drupal": "^1.2",
         "phpstan/extension-installer": "^1.3",
-        "phpstan/phpstan-deprecation-rules": "^1.1"
+        "phpstan/phpstan-deprecation-rules": "^1.1",
+        "phpunit/phpunit": "^9.6"
     },
     "repositories": [
         {
@@ -29,6 +33,11 @@
             "url": "https://packages.drupal.org/8"
         }
     ],
+    "autoload-dev": {
+        "psr-4": {
+            "Drupal\\Tests\\os2web_key\\": "tests/src/"
+        }
+    },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,

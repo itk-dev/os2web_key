@@ -43,10 +43,10 @@ class KeyHelper {
       return $this->parseCertificates($key->getKeyValue(), $type->getInputFormat(), $type->getPassphrase(), $key);
     }
 
-    $preConvertedCertificates = $this->parseCertificates($key->getKeyValue(), $type->getInputFormat(), $type->getPassphrase(), $key);
-    $convertedAndCombinedCertificate = $this->convertCertificates($preConvertedCertificates, $type->getOutputFormat(), $key);
+    $parsedCertificates = $this->parseCertificates($key->getKeyValue(), $type->getInputFormat(), $type->getPassphrase(), $key);
+    $convertedCertificates = $this->convertCertificates($parsedCertificates, $type->getOutputFormat(), $key);
 
-    return $this->parseCertificates($convertedAndCombinedCertificate, $type->getOutputFormat(), $type->getPassphrase(), $key);
+    return $this->parseCertificates($convertedCertificates, $type->getOutputFormat(), $type->getPassphrase(), $key);
   }
 
   /**

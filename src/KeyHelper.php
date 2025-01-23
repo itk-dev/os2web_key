@@ -38,8 +38,15 @@ class KeyHelper {
       throw $this->createSslRuntimeException(sprintf('Invalid key type: %s', $type::class), $key);
     }
 
-    return $this->parseCertificates($key->getKeyValue(), $type->getInputFormat(), $type->getPassphrase(), $key);
+    // Check whether conversion is needed.
+    if ($type->getInputFormat() === $type->getOutputFormat()) {
+      return $this->parseCertificates($key->getKeyValue(), $type->getInputFormat(), $type->getPassphrase(), $key);
+    }
 
+    $parsedCertificates = $this->parseCertificates($key->getKeyValue(), $type->getInputFormat(), $type->getPassphrase(), $key);
+    $convertedCertificates = $this->convertCertificates($parsedCertificates, $type->getOutputFormat(), $key);
+
+    return $this->parseCertificates($convertedCertificates, $type->getOutputFormat(), $type->getPassphrase(), $key);
   }
 
   /**

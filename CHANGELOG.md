@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-6](https://github.com/OS2web/os2web_key/pull/6)
+  * Add missing dependency on Drupal [key](https://github.com/OS2web/os2web_key/pull/6)
+  * Updates GitHub Actions
 * [PR-5](https://github.com/OS2web/os2web_key/pull/5)
   Convert certificates when necessary.
 * [PR-4](https://github.com/OS2web/os2web_key/pull/4)

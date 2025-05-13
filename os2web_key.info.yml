@@ -3,3 +3,5 @@ type: module
 description: 'Key stuff for OS2Web'
 package: 'OS2web'
 core_version_requirement: ^9 || ^10
+dependencies:
+  - 'drupal:key'
